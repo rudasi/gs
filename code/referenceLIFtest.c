@@ -1,9 +1,9 @@
 //An implementation of our standard LIF model. Run an example simulation
-//like this: 
+//like this:
 //
 //drive = -1:.002:1; %ramp input
 //n = 50; # of neurons
-//tauRef = .002; tauRC = .02; 
+//tauRef = .002; tauRC = .02;
 //intercepts = -1+2*rand(1,n);
 //maxRates = 100+100*rand(1,n);
 //scales = ((1 ./ (1 - exp( (tauRef - (1 ./ maxRates)) / tauRC))) - 1) ./ (1 - intercepts);
@@ -12,8 +12,8 @@
 //imagesc(spikes), colormap('gray'), xlabel('Time (ms)'), ylabel('Neuron #')
 
 //dt: time step (s)
-//drive: input in the range [-1,1] (1 X #steps)  
-//tauRef: spike refractory period 
+//drive: input in the range [-1,1] (1 X #steps)
+//tauRef: spike refractory period
 //tauRC: membrane time constant
 //scales: list of input scale factors for different neurons (1 X #neurons)
 //biases: list of additive input biases for different neurons (1 X #neurons)
@@ -25,12 +25,12 @@
 
 //Size of arrays
 #define SIZE 50
- 
+
 void referenceLIF(float dt, float drive[], float tauRef, float tauRC, float scales[], float biases[]);
 
 void rand_gen(int count, float rand_num[]);
 
-float myround(float x, int places);
+//float myround(float x, int places);
 
 int main()
 {
@@ -40,15 +40,15 @@ int main()
    float drive[1001];
    //struct timeval t;
    float temp;
-   float rand_num[100] = {0};
+   float rand_num[50] = {0};
 
-   rand_gen(100, rand_num);
+   rand_gen(50, rand_num);
 
    FILE* rand_file;
    rand_file = fopen("rand_number.csv","a+");
-   for(i=0;i<100;i++)
+   for(i=0;i<50;i++)
    {
-      myround(rand_num[i],4);
+      //myround(rand_num[i],4);
       fprintf(rand_file,",%f",rand_num[i]);
    }
    fclose(rand_file);
@@ -56,7 +56,7 @@ int main()
    for(i=0;i<1001;i++)
    {
       drive[i] = -1.0 + (i * 0.002);
-      drive[i] = myround(drive[i],4);
+      //drive[i] = myround(drive[i],4);
    }
 
    for(i=0;i<n;i++)
@@ -65,29 +65,29 @@ int main()
    //   srand(t.tv_sec * t.tv_usec);
    //   printf("%f\n",rand_num[i]);
       intercepts[i] = -1 + 2*rand_num[i];
-      intercepts[i] = myround(intercepts[i],4); 
+      //intercepts[i] = myround(intercepts[i],4);
    }
- 
-    
+
+
    for(i=0;i<n;i++)
    {
      // gettimeofday(&t,NULL);
      // srand(t.tv_sec * t.tv_usec);
       maxRates[i] = 100 + 100*rand_num[i+50];
-      maxRates[i] = myround(maxRates[i],4);
+      //maxRates[i] = myround(maxRates[i],4);
       printf("%f ",maxRates[i]);
    }
 
    for(i=0;i<n;i++)
    {
       temp =  exp((tauRef - (1.0/maxRates[i])) / tauRC);
-      temp = myround(temp,4);
+      //temp = myround(temp,4);
       scales[i] = ((1.0 / (1 - temp)) - 1) / (1 - intercepts[i]);
-      scales[i] = myround(scales[i],4);
+      //scales[i] = myround(scales[i],4);
       biases[i] = 1 - (scales[i] * intercepts[i]);
-      biases[i] = myround(biases[i],4);
+      //biases[i] = myround(biases[i],4);
    }
-   
+
    referenceLIF(dt, drive, tauRef, tauRC, scales, biases);
 
 return 0;
@@ -109,11 +109,11 @@ void referenceLIF(float dt, float drive[], float tauRef, float tauRC, float scal
          spikes[i][j] = 0;
       }
    }
-   
+
    for(i=0;i<1001;i++)
    {
       endTime = dt*(i + 1);
-      endTime = myround(endTime, 4);
+      //endTime = myround(endTime, 4);
       counter = 0;
       for(j=0;j<50;j++)
       {
@@ -121,18 +121,18 @@ void referenceLIF(float dt, float drive[], float tauRef, float tauRC, float scal
          spikeIndices[j] = 0;
 
          intTimes[j] = fmin(dt, fmax(0.0, (endTime - lastSpike[j] - tauRef)));
-         intTimes[j] = myround(intTimes[j],4);
+         //intTimes[j] = myround(intTimes[j],4);
          current[j] = biases[j] + (scales[j] * drive[i]);
-         current[j] = myround(current[j],4);
+         //current[j] = myround(current[j],4);
          dV[j] = (current[j] - V[j]) / tauRC;
-         dV[j] = myround(dV[j],4);
+         //dV[j] = myround(dV[j],4);
          V[j] = V[j] + intTimes[j] * dV[j];
-         V[j] = myround(V[j],4);
-      } 
+         //V[j] = myround(V[j],4);
+      }
 
       for(j=0;j<50;j++)
       {
-         V[j] = fmax(0.0,V[j]); 
+         V[j] = fmax(0.0,V[j]);
          if (V[j] >= 1.0)
          {
             spikeIndices[counter] = j;
@@ -147,8 +147,8 @@ void referenceLIF(float dt, float drive[], float tauRef, float tauRC, float scal
          spikes[spikeIndices[j]][i] = 1;
       }
    }
-   
-   fprintf(file,"%d",spikes[0][0]); 
+
+   fprintf(file,"%d",spikes[0][0]);
    for(i=0;i<50;i++)
    {
       for(j=1;j<1001;j++)
@@ -159,7 +159,7 @@ void referenceLIF(float dt, float drive[], float tauRef, float tauRC, float scal
    }
 
    fclose(file);
-  //Open CV image plot 
+  //Open CV image plot
 }
 
 void rand_gen(int count, float rand_num[])
@@ -180,32 +180,34 @@ void rand_gen(int count, float rand_num[])
          temp = (xi & mask) >> (taps[j] - 1);
          fb = fb ^ temp;
       }
-    
+
       xi = xi << 1;
-      if(fb > 0) 
+      if(fb > 0)
       {
          xi = xi | 1;
       }
-      else 
+      else
       {
          mask = ~0 << 1;
          xi = xi & mask;
       }
       rand_num[i] = fabs((xi*1.0)/mod);
-      rand_num[i] = myround(rand_num[i], 4);
+     // rand_num[i] = myround(rand_num[i], 4);
       //fprintf(rand_file,",%.4f",rand_num[i]);
    }
 }
 
+/*
 float myround(float x, int places)
 {
    float const shift = powf(10.0f, places);
    x *= shift;
    x = roundf(x + 0.5f);
    x /= shift;
-   
+
    return x;
 }
+*/
 
 
 
@@ -213,4 +215,3 @@ float myround(float x, int places)
 
 
 
- 
