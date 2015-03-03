@@ -40,7 +40,7 @@ void readCSVFile(char* filename, float* data){
         counter = 0;
         tok = strtok(str,",");
         while (tok != NULL){
-           data[counter] = atof(tok);
+           data[counter] = sscanf(atof(tok),;
            printf("%d: %f\n",counter+1,data[counter]);
            counter++;
            tok = strtok(NULL,",");
