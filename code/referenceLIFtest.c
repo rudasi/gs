@@ -22,9 +22,35 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <string.h>
 
 //Size of arrays
 #define SIZE 50
+#define ARRAY_SIZE 1024
+
+void readCSVFile(char* filename, float* data){
+   char str[ARRAY_SIZE];
+   char* tok;
+   int counter;
+   FILE* stream = fopen(filename, "r");
+   if (stream == NULL){
+      printf("Unable to open file: %s", filename);
+   } else {
+     if (fgets(str, ARRAY_SIZE, stream) != NULL) {
+        counter = 0;
+        tok = strtok(str,",");
+        while (tok != NULL){
+           data[counter] = atof(tok);
+           printf("%d: %f\n",counter+1,data[counter]);
+           counter++;
+           tok = strtok(NULL,",");
+        } 
+     }
+     else {
+        printf("Unable to read characters from file: %s",filename);
+     }
+   }      
+}
 
 void referenceLIF(float dt, float drive[], float tauRef, float tauRC, float scales[], float biases[]);
 
@@ -40,10 +66,15 @@ int main()
    float drive[1001];
    //struct timeval t;
    float temp;
-   float rand_num[50] = {0};
+   //float rand_num[50] = {0};
+   char file1[] = "intercepts.csv";
+   char file2[] = "maxrates.csv";
+   readCSVFile(file1,intercepts);
+   readCSVFile(file2,maxRates);
 
-   rand_gen(50, rand_num);
 
+   //rand_gen(50, rand_num);
+/*
    FILE* rand_file;
    rand_file = fopen("rand_number.csv","a+");
    for(i=0;i<50;i++)
@@ -52,13 +83,13 @@ int main()
       fprintf(rand_file,",%f",rand_num[i]);
    }
    fclose(rand_file);
-
+*/
    for(i=0;i<1001;i++)
    {
       drive[i] = -1.0 + (i * 0.002);
       //drive[i] = myround(drive[i],4);
    }
-
+/*
    for(i=0;i<n;i++)
    {
    //   gettimeofday(&t,NULL);
@@ -77,7 +108,7 @@ int main()
       //maxRates[i] = myround(maxRates[i],4);
       printf("%f ",maxRates[i]);
    }
-
+*/
    for(i=0;i<n;i++)
    {
       temp =  exp((tauRef - (1.0/maxRates[i])) / tauRC);
