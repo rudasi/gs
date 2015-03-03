@@ -28,7 +28,7 @@
 #define SIZE 50
 #define ARRAY_SIZE 1024
 
-void readCSVFile(char* filename, float* data){
+void readCSVFile(char* filename, double* data){
    char str[ARRAY_SIZE];
    char* tok;
    int counter;
@@ -40,8 +40,8 @@ void readCSVFile(char* filename, float* data){
         counter = 0;
         tok = strtok(str,",");
         while (tok != NULL){
-           data[counter] = sscanf(atof(tok),;
-           printf("%d: %f\n",counter+1,data[counter]);
+           sscanf(tok, "%lf", &data[counter]);
+           printf("%d: %lf\n",counter+1,data[counter]);
            counter++;
            tok = strtok(NULL,",");
         } 
@@ -62,7 +62,8 @@ int main()
 {
    int i;
    float dt = 0.001, n = 50, tauRef = 0.002, tauRC = 0.02;
-   float intercepts[SIZE], maxRates[SIZE], scales[SIZE], biases[SIZE];
+   float scales[SIZE], biases[SIZE];
+   double intercepts[SIZE], maxRates[SIZE];
    float drive[1001];
    //struct timeval t;
    float temp;
